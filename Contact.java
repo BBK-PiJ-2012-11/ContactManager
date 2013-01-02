@@ -13,7 +13,7 @@ public interface Contact {
 	int getId();
 	
 	/**
-	* Returns the name of thec contact.
+	* Returns the name of the contact.
 	*
 	* @return the name of the contact.
 	*/ 
