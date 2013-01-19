@@ -1,7 +1,7 @@
 import java.util.Calendar;
 import java.util.Set;
 
-public class MeetingImpl {
+public class MeetingImpl implements Meeting {
 	
 	private int id;
 	private Calendar date;
