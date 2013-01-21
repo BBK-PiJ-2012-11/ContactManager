@@ -45,7 +45,16 @@ public class ContactManagerImpl implements ContactManager{
 	}
 
 	public Meeting getMeeting(int id) {
-		// TODO Auto-generated method stub
+		Iterator<PastMeeting> it1 = pastMeetings.iterator();
+		while (it1.hasNext()){
+			if (it1.next().getId() == id)
+				return it1.next();
+		}
+		Iterator<FutureMeeting> it2 = futureMeetings.iterator();
+		while (it1.hasNext()){
+			if(it2.next().getId() == id)
+				return it2.next();
+		}
 		return null;
 	}
 
