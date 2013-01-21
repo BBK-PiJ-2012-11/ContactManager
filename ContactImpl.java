@@ -7,7 +7,7 @@ public class ContactImpl implements Contact{
 		//To create a unique ID, it is the result of summing the name and the notes hashCodes. 
 		this.name = name;
 		this.notes = notes;
-		ID = name.hashCode()+notes.hashCode();
+		ID = (name.hashCode()+notes.hashCode())%10000;
 	}
 	
 	public int getId(){

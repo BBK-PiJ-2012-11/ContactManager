@@ -2,9 +2,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
-/*
-* Add a new meeting to be held in the future.
-*/
+
 public interface ContactManager{
 	/**
 	* Add a new meeting to be held in the future.
@@ -15,7 +13,7 @@ public interface ContactManager{
 	* @throws IllegalArgumentException if the meeting is set for a time in the past,
 	* 		or if any contact is unknown / non-existent.
 	*/
-	int addFutureMeeting(Set<Contact> contacts, Calendar date);
+	int addFutureMeeting(Set<Contact> contacts, Calendar date) throws IllegalAccessException;
 	
 	/**
 	* Returns the PAST meeting with the requested ID, or null if there is none.

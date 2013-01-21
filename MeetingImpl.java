@@ -11,9 +11,9 @@ public class MeetingImpl implements Meeting {
 	public MeetingImpl(Calendar date, Set<Contact> contacts) {
 		//In order to create unique IDs, 
 		//the hashCode of the date and the set of contacts is summed to create it. 
-		this.id = date.hashCode()+contacts.hashCode();
 		this.date = date;
 		this.contacts = contacts;
+		this.id = (this.date.hashCode()+this.contacts.hashCode())%10000;
 	}
 
 	//This constructor is made in case the id wants to be introduced manually

@@ -1,16 +1,19 @@
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
-
+import java.lang.IllegalAccessException;
 
 public class ContactManagerImpl implements ContactManager{
 	private Set<Contact> contacts;
 	private List<FutureMeeting> futureMeetings;
 	private List<PastMeeting> pastMeetings;
 	
-	public int addFutureMeeting(Set<Contact> contacts, Calendar date) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int addFutureMeeting(Set<Contact> contacts, Calendar date) throws IllegalAccessException{
+		if(!this.contacts.containsAll(contacts) || (date.getTimeInMillis() < Calendar.getInstance().getTimeInMillis()) )
+			throw new IllegalAccessException ("The meeting is being tried to set in the past or any of the contacts is unknown/non-existent");
+		FutureMeeting meeting = new FutureMeetingImpl(date,contacts);
+		futureMeetings.add(meeting);
+		return meeting.getId();
 	}
 
 	public PastMeeting getPastMeeting(int id) {
