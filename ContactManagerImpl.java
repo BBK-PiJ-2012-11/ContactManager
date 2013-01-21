@@ -72,8 +72,38 @@ public class ContactManagerImpl implements ContactManager{
 	}
 
 	public List<Meeting> getFutureMeetingList(Calendar date) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Meeting> unsortedList = new ArrayList<Meeting>();
+		Iterator<PastMeeting> it1 = pastMeetings.iterator();
+		while(it1.hasNext()){
+			if(it1.next().getDate() == date)
+				unsortedList.add(it1.next());
+		}
+		Iterator<FutureMeeting> it2 = futureMeetings.iterator();
+		while(it2.hasNext()){
+			if(it2.next().getDate() == date)
+				unsortedList.add(it2.next());
+		}
+		if (unsortedList.isEmpty())
+			return unsortedList;
+		return sortListByDate(unsortedList);
+	}
+	
+	private List<Meeting> sortListByDate(List<Meeting> unsortedList){
+		List<Meeting> sortedList = new ArrayList<Meeting>();
+		while(!unsortedList.isEmpty()){
+			Iterator<Meeting> it = unsortedList.iterator();
+			long oldestDate = it.next().getDate().getTimeInMillis();
+			Meeting oldestM = it.next();
+			while(it.hasNext()){
+				if(oldestDate > it.next().getDate().getTimeInMillis()){
+					oldestDate = it.next().getDate().getTimeInMillis();
+					oldestM = it.next();
+				}								
+			}
+			unsortedList.remove(oldestM);
+			sortedList.add(oldestM);
+		}
+		return sortedList;
 	}
 
 	public List<PastMeeting> getPastMeetingList(Contact contact) {
