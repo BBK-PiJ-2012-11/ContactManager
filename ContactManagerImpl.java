@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -99,8 +100,7 @@ public class ContactManagerImpl implements ContactManager{
 		return (List<PastMeeting>) sortListByDate(unsortedList);
 	}
 
-	public void addNewPastMeeting(Set<Contact> contacts, Calendar date,
-			String next) {
+	public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String next) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -121,9 +121,18 @@ public class ContactManagerImpl implements ContactManager{
 		return null;
 	}
 
-	public Set<Contact> getContacts(String name) {
-		// TODO Auto-generated method stub
-		return null;
+
+	public Set<Contact> getContacts(String name) throws NullPointerException{
+		if (name == null)
+			throw new NullPointerException ("The parameter name cannot be null");
+		Set<Contact> contactsWithName = new HashSet<Contact>();
+		Iterator<Contact> it = contacts.iterator();
+		while(it.hasNext()){
+			if(it.next().getName().contains(name)){
+				contactsWithName.add(it.next());
+			}
+		}
+		return contactsWithName;
 	}
 
 	public void flush() {
@@ -131,7 +140,8 @@ public class ContactManagerImpl implements ContactManager{
 		
 	}
 	
-	//This private method is used for sorting an unsorted List of Meetings by date. 
+	// This private method is used for sorting an unsorted List of Meetings by date. 
+	// Uses restricted wildcards accepting only the class Meeting and its subclasses
 	private  List<? extends Meeting> sortListByDate(List<? extends Meeting> unsortedList){
 		List<Meeting> sortedList = new ArrayList<Meeting>();
 		while(!unsortedList.isEmpty()){
