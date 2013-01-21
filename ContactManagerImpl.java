@@ -110,21 +110,6 @@ public class ContactManagerImpl implements ContactManager{
 		this.pastMeetings.add(new PastMeetingImpl(date,contacts,text));
 	}
 
-	
-	/**
-	* Add notes to a meeting.
-	*
-	* This method is used when a future meeting takes place, and is 
-	* then converted to a past meeting (with notes).
-	*
-	* It can be also used to add notes to a past meeting at a later date.
-	*
-	* @param id the ID of the meeting.
-	* @param text messages to be added about the meeting.
-	* @throws IllegalArgumentException if the meeting does not exist.
-	* @throws IllegalStateException if the meeting is set for a date in the future.
-	* @throws NullPointerException if the notes are null.
-	*/
 	public void addMeetingNotes(int id, String text) throws IllegalArgumentException, IllegalStateException, NullPointerException{
 		if(text==null)
 			throw new NullPointerException ("The notes cannot be null");
@@ -152,8 +137,20 @@ public class ContactManagerImpl implements ContactManager{
 	}
 
 	public Set<Contact> getContacts(int... ids) {
-		// TODO Auto-generated method stub
-		return null;
+		Set<Contact> foundContacts = new HashSet<Contact>();
+		for (int id : ids){
+			Iterator<Contact> it = contacts.iterator();
+			boolean containsId = false;
+			while(it.hasNext()){
+				if (it.next().getId() == id){
+					foundContacts.add(it.next());
+					containsId = true;
+				}
+			}
+			if (!containsId)
+				throw new IllegalArgumentException ("Any of the IDs is not in the list");
+		}
+		return foundContacts;
 	}
 
 
