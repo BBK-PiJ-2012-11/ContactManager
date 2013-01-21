@@ -4,7 +4,6 @@ import java.util.Set;
 public class PastMeetingImpl extends MeetingImpl implements PastMeeting {
 	
 	private String notes;
-	private int id;
 	
 	public PastMeetingImpl(Calendar date,Set<Contact> contacts,String notes) {
 		super(date, contacts);

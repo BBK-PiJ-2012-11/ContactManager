@@ -72,6 +72,7 @@ public class ContactManagerImpl implements ContactManager{
 		return meetingsWithContact;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Meeting> getFutureMeetingList(Calendar date) {
 		List<Meeting> unsortedList = new ArrayList<Meeting>();
 		Iterator<PastMeeting> it1 = pastMeetings.iterator();
@@ -87,6 +88,7 @@ public class ContactManagerImpl implements ContactManager{
 		return (List<Meeting>) sortListByDate(unsortedList);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<PastMeeting> getPastMeetingList(Contact contact) throws IllegalArgumentException{
 		if(!contacts.contains(contact)){
 			throw new IllegalArgumentException ("The contact does not exist in the list of contacts");
@@ -100,9 +102,12 @@ public class ContactManagerImpl implements ContactManager{
 		return (List<PastMeeting>) sortListByDate(unsortedList);
 	}
 
-	public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String next) {
-		// TODO Auto-generated method stub
-		
+	public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) throws NullPointerException, IllegalArgumentException{
+		if(contacts == null || date == null || text == null)
+			throw new NullPointerException("Any of the arguments is null");
+		if(contacts.isEmpty() || !this.contacts.containsAll(contacts))
+			throw new IllegalArgumentException ("The list of contacts is empty or any of the contacts does not exist");
+		this.pastMeetings.add(new PastMeetingImpl(date,contacts,text));
 	}
 
 	public void addMeetingNotes(int id, String text) {

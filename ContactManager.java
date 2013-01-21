@@ -85,7 +85,7 @@ public interface ContactManager{
 	*		any of the contacts does not exist.
 	* @throws NullPointerException if any of the arguments is null.
 	*/
-	void addNewPastMeeting(Set<Contact> contacts, Calendar date, String next);
+	void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) throws NullPointerException,IllegalArgumentException;
 	
 	/**
 	* Add notes to a meeting.
