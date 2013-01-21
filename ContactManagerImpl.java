@@ -1,23 +1,32 @@
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.lang.IllegalAccessException;
 
 public class ContactManagerImpl implements ContactManager{
 	private Set<Contact> contacts;
 	private List<FutureMeeting> futureMeetings;
 	private List<PastMeeting> pastMeetings;
 	
-	public int addFutureMeeting(Set<Contact> contacts, Calendar date) throws IllegalAccessException{
+	public int addFutureMeeting(Set<Contact> contacts, Calendar date) throws IllegalArgumentException{
 		if(!this.contacts.containsAll(contacts) || (date.getTimeInMillis() < Calendar.getInstance().getTimeInMillis()) )
-			throw new IllegalAccessException ("The meeting is being tried to set in the past or any of the contacts is unknown/non-existent");
+			throw new IllegalArgumentException ("The meeting is being tried to set in the past or any of the contacts is unknown/non-existent");
 		FutureMeeting meeting = new FutureMeetingImpl(date,contacts);
 		futureMeetings.add(meeting);
 		return meeting.getId();
 	}
 
-	public PastMeeting getPastMeeting(int id) {
-		// TODO Auto-generated method stub
+	public PastMeeting getPastMeeting(int id) throws IllegalArgumentException{
+		Iterator<FutureMeeting> it1 = futureMeetings.iterator();
+		while (it1.hasNext()){
+			if (it1.next().getId() == id)
+				throw new IllegalArgumentException("The ID introduced pertains to a Future Meeting");
+		}
+		Iterator<PastMeeting> it2 = pastMeetings.iterator();
+		while (it1.hasNext()){
+			if(it2.next().getId() == id)
+				return it2.next();
+		}
 		return null;
 	}
 
