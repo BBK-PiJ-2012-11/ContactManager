@@ -4,9 +4,10 @@ public class ContactImpl implements Contact{
 	private String notes;
 	
 	ContactImpl(String name,String notes){
+		//To create a unique ID, it is the result of summing the name and the notes hashCodes. 
 		this.name = name;
 		this.notes = notes;
-		ID = name.hashCode();
+		ID = name.hashCode()+notes.hashCode();
 	}
 	
 	public int getId(){
