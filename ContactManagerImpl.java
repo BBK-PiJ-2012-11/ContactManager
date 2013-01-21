@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
@@ -58,9 +59,16 @@ public class ContactManagerImpl implements ContactManager{
 		return null;
 	}
 
-	public List<Meeting> getFutureMeetingList(Contact contact) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Meeting> getFutureMeetingList(Contact contact) throws IllegalArgumentException {
+		if(!contacts.contains(contact))
+			throw new IllegalArgumentException ("The contact does not exists");
+		List<Meeting> meetingsWithContact = new ArrayList<Meeting>();
+		Iterator<FutureMeeting> it = futureMeetings.iterator();
+		while(it.hasNext()){
+			if (it.next().getContacts().contains(contact))
+				meetingsWithContact.add(it.next());				
+		}
+		return meetingsWithContact;
 	}
 
 	public List<Meeting> getFutureMeetingList(Calendar date) {

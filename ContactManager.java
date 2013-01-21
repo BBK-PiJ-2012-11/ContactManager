@@ -45,13 +45,13 @@ public interface ContactManager{
 	* Returns the list of future meetings scheduled with this contact.
 	*
 	* If there are none, the returned list will be empty. 
-	* Otheriwse, the list will be chronologically sorted and will not contain any duplicates.
+	* Otherwise, the list will be chronologically sorted and will not contain any duplicates.
 	*
 	* @param contact one of the user's contacts.
 	* @return the list of future meeting(s) scheduled with this contact (maybe empty).
 	* @throws IllegalArgumentException if the contact does not exist.
 	*/
-	List<Meeting> getFutureMeetingList(Contact contact);
+	List<Meeting> getFutureMeetingList(Contact contact) throws IllegalArgumentException;
 	
 	/**
 	* Returns the list of meetings that are scheduled for, or that took place on, the specified date
