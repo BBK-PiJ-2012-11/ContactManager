@@ -92,9 +92,10 @@ public class ContactManagerImpl implements ContactManager{
 		
 	}
 	
-	public void addNewContact(String name, String notes) {
-		// TODO Auto-generated method stub
-		
+	public void addNewContact(String name, String notes) throws NullPointerException{
+		if (name == null || notes == null)
+			throw new NullPointerException ("The name or the notes are null");
+		contacts.add(new ContactImpl(name,notes));
 	}
 
 	public Set<Contact> getContacts(int... ids) {
