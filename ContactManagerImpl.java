@@ -4,7 +4,10 @@ import java.util.Set;
 
 
 public class ContactManagerImpl implements ContactManager{
-
+	private Set<Contact> contacts;
+	private List<FutureMeeting> futureMeetings;
+	private List<PastMeeting> pastMeetings;
+	
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) {
 		// TODO Auto-generated method stub
 		return 0;
