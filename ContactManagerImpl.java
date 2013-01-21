@@ -83,32 +83,20 @@ public class ContactManagerImpl implements ContactManager{
 			if(it2.next().getDate() == date)
 				unsortedList.add(it2.next());
 		}
-		if (unsortedList.isEmpty())
-			return unsortedList;
-		return sortListByDate(unsortedList);
+		return (List<Meeting>) sortListByDate(unsortedList);
 	}
 	
-	private List<Meeting> sortListByDate(List<Meeting> unsortedList){
-		List<Meeting> sortedList = new ArrayList<Meeting>();
-		while(!unsortedList.isEmpty()){
-			Iterator<Meeting> it = unsortedList.iterator();
-			long oldestDate = it.next().getDate().getTimeInMillis();
-			Meeting oldestM = it.next();
-			while(it.hasNext()){
-				if(oldestDate > it.next().getDate().getTimeInMillis()){
-					oldestDate = it.next().getDate().getTimeInMillis();
-					oldestM = it.next();
-				}								
-			}
-			unsortedList.remove(oldestM);
-			sortedList.add(oldestM);
+	public List<PastMeeting> getPastMeetingList(Contact contact) throws IllegalArgumentException{
+		if(!contacts.contains(contact)){
+			throw new IllegalArgumentException ("The contact does not exist in the list of contacts");
 		}
-		return sortedList;
-	}
-
-	public List<PastMeeting> getPastMeetingList(Contact contact) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Meeting> unsortedList = new ArrayList<Meeting>();
+		Iterator<PastMeeting> it = pastMeetings.iterator();
+		while (it.hasNext()){
+			if (it.next().getContacts().contains(contact))
+				unsortedList.add(it.next());
+		}
+		return (List<PastMeeting>) sortListByDate(unsortedList);
 	}
 
 	public void addNewPastMeeting(Set<Contact> contacts, Calendar date,
@@ -143,5 +131,23 @@ public class ContactManagerImpl implements ContactManager{
 		
 	}
 	
+	//This private method is used for sorting an unsorted List of Meetings by date. 
+	private  List<? extends Meeting> sortListByDate(List<? extends Meeting> unsortedList){
+		List<Meeting> sortedList = new ArrayList<Meeting>();
+		while(!unsortedList.isEmpty()){
+			Iterator<? extends Meeting> it = unsortedList.iterator();
+			long oldestDate = it.next().getDate().getTimeInMillis();
+			Meeting oldestM = it.next();
+			while(it.hasNext()){
+				if(oldestDate > it.next().getDate().getTimeInMillis()){
+					oldestDate = it.next().getDate().getTimeInMillis();
+					oldestM = it.next();
+				}								
+			}
+			unsortedList.remove(oldestM);
+			sortedList.add(oldestM);
+		}
+		return sortedList;
+	}
 
 }
