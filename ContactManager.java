@@ -31,7 +31,7 @@ public interface ContactManager{
 	* @return the meeting with the requested ID, or null if there is none.
 	* @throws IllegarlArgumentException if there is a meeting with that ID happening in the past.
 	*/
-	FutureMeeting getFutureMeeting(int id);
+	FutureMeeting getFutureMeeting(int id) throws IllegalArgumentException;
 	
 	/**
 	* Returns the meeting with the requested ID, or null if there is none.

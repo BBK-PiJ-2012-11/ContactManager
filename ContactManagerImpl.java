@@ -30,8 +30,17 @@ public class ContactManagerImpl implements ContactManager{
 		return null;
 	}
 
-	public FutureMeeting getFutureMeeting(int id) {
-		// TODO Auto-generated method stub
+	public FutureMeeting getFutureMeeting(int id) throws IllegalArgumentException{
+		Iterator<PastMeeting> it1 = pastMeetings.iterator();
+		while (it1.hasNext()){
+			if (it1.next().getId() == id)
+				throw new IllegalArgumentException("The ID introduced pertains to a Past Meeting");
+		}
+		Iterator<FutureMeeting> it2 = futureMeetings.iterator();
+		while (it1.hasNext()){
+			if(it2.next().getId() == id)
+				return it2.next();
+		}
 		return null;
 	}
 
