@@ -98,10 +98,10 @@ public interface ContactManager{
 	* @param id the ID of the meeting.
 	* @param text messages to be added about the meeting.
 	* @throws IllegalArgumentException if the meeting does not exist.
-	* @throws IllegalStateExcpetion if the meeting is set for a date in the future.
+	* @throws IllegalStateException if the meeting is set for a date in the future.
 	* @throws NullPointerException if the notes are null.
 	*/
-	void addMeetingNotes(int id, String text);
+	void addMeetingNotes(int id, String text) throws IllegalArgumentException, IllegalStateException, NullPointerException;
 	
 	/**
 	* Create a new contact with the specified name and notes.

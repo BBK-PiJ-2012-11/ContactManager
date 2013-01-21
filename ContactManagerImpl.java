@@ -110,9 +110,39 @@ public class ContactManagerImpl implements ContactManager{
 		this.pastMeetings.add(new PastMeetingImpl(date,contacts,text));
 	}
 
-	public void addMeetingNotes(int id, String text) {
-		// TODO Auto-generated method stub
-		
+	
+	/**
+	* Add notes to a meeting.
+	*
+	* This method is used when a future meeting takes place, and is 
+	* then converted to a past meeting (with notes).
+	*
+	* It can be also used to add notes to a past meeting at a later date.
+	*
+	* @param id the ID of the meeting.
+	* @param text messages to be added about the meeting.
+	* @throws IllegalArgumentException if the meeting does not exist.
+	* @throws IllegalStateException if the meeting is set for a date in the future.
+	* @throws NullPointerException if the notes are null.
+	*/
+	public void addMeetingNotes(int id, String text) throws IllegalArgumentException, IllegalStateException, NullPointerException{
+		if(text==null)
+			throw new NullPointerException ("The notes cannot be null");
+		FutureMeeting futureMeeting = null;
+		Iterator<FutureMeeting> it = futureMeetings.iterator();
+		boolean foundId = false;
+		while(it.hasNext()){
+			if(it.next().getId()==id){
+				foundId = true;
+				futureMeeting = it.next();
+				if(it.next().getDate().getTimeInMillis() > Calendar.getInstance().getTimeInMillis())
+					throw new IllegalStateException ("This meeting cannot had been produced as it is set for a date in the future");
+				break;
+			}
+		}
+		if (!foundId)
+			throw new IllegalArgumentException("The meeting Id introduced does not exist");
+		pastMeetings.add(new PastMeetingImpl(futureMeeting,text));
 	}
 	
 	public void addNewContact(String name, String notes) throws NullPointerException{
