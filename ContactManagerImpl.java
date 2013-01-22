@@ -10,7 +10,7 @@ public class ContactManagerImpl implements ContactManager{
 	private List<FutureMeeting> futureMeetings;
 	private List<PastMeeting> pastMeetings;
 	
-	public int addFutureMeeting(Set<Contact> contacts, Calendar date) throws IllegalArgumentException{
+	public int addFutureMeeting(Set<Contact> contacts, Calendar date){
 		if(!this.contacts.containsAll(contacts) || (date.getTimeInMillis() < Calendar.getInstance().getTimeInMillis()) )
 			throw new IllegalArgumentException ("The meeting is being tried to set in the past or any of the contacts is unknown/non-existent");
 		FutureMeeting meeting = new FutureMeetingImpl(date,contacts);
@@ -18,7 +18,7 @@ public class ContactManagerImpl implements ContactManager{
 		return meeting.getId();
 	}
 
-	public PastMeeting getPastMeeting(int id) throws IllegalArgumentException{
+	public PastMeeting getPastMeeting(int id){
 		Iterator<FutureMeeting> it1 = futureMeetings.iterator();
 		while (it1.hasNext()){
 			if (it1.next().getId() == id)
@@ -32,7 +32,7 @@ public class ContactManagerImpl implements ContactManager{
 		return null;
 	}
 
-	public FutureMeeting getFutureMeeting(int id) throws IllegalArgumentException{
+	public FutureMeeting getFutureMeeting(int id){
 		Iterator<PastMeeting> it1 = pastMeetings.iterator();
 		while (it1.hasNext()){
 			if (it1.next().getId() == id)
@@ -60,7 +60,7 @@ public class ContactManagerImpl implements ContactManager{
 		return null;
 	}
 
-	public List<Meeting> getFutureMeetingList(Contact contact) throws IllegalArgumentException {
+	public List<Meeting> getFutureMeetingList(Contact contact){
 		if(!contacts.contains(contact))
 			throw new IllegalArgumentException ("The contact does not exists");
 		List<Meeting> meetingsWithContact = new ArrayList<Meeting>();
@@ -89,7 +89,7 @@ public class ContactManagerImpl implements ContactManager{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<PastMeeting> getPastMeetingList(Contact contact) throws IllegalArgumentException{
+	public List<PastMeeting> getPastMeetingList(Contact contact){
 		if(!contacts.contains(contact)){
 			throw new IllegalArgumentException ("The contact does not exist in the list of contacts");
 		}
@@ -102,7 +102,7 @@ public class ContactManagerImpl implements ContactManager{
 		return (List<PastMeeting>) sortListByDate(unsortedList);
 	}
 
-	public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) throws NullPointerException, IllegalArgumentException{
+	public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text){
 		if(contacts == null || date == null || text == null)
 			throw new NullPointerException("Any of the arguments is null");
 		if(contacts.isEmpty() || !this.contacts.containsAll(contacts))
@@ -110,7 +110,7 @@ public class ContactManagerImpl implements ContactManager{
 		this.pastMeetings.add(new PastMeetingImpl(date,contacts,text));
 	}
 
-	public void addMeetingNotes(int id, String text) throws IllegalArgumentException, IllegalStateException, NullPointerException{
+	public void addMeetingNotes(int id, String text) {
 		if(text==null)
 			throw new NullPointerException ("The notes cannot be null");
 		FutureMeeting futureMeeting = null;
@@ -130,7 +130,7 @@ public class ContactManagerImpl implements ContactManager{
 		pastMeetings.add(new PastMeetingImpl(futureMeeting,text));
 	}
 	
-	public void addNewContact(String name, String notes) throws NullPointerException{
+	public void addNewContact(String name, String notes){
 		if (name == null || notes == null)
 			throw new NullPointerException ("The name or the notes are null");
 		contacts.add(new ContactImpl(name,notes));
@@ -154,7 +154,7 @@ public class ContactManagerImpl implements ContactManager{
 	}
 
 
-	public Set<Contact> getContacts(String name) throws NullPointerException{
+	public Set<Contact> getContacts(String name){
 		if (name == null)
 			throw new NullPointerException ("The parameter name cannot be null");
 		Set<Contact> contactsWithName = new HashSet<Contact>();
