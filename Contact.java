@@ -36,3 +36,5 @@ public interface Contact {
 	*/
 	void addNotes(String note);
 }
+
+//Comment added
