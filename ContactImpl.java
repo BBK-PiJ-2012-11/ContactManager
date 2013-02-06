@@ -1,4 +1,6 @@
-public class ContactImpl implements Contact{
+import java.io.Serializable;
+
+public class ContactImpl implements Contact, Serializable{
 	private int ID;
 	private String name;
 	private String notes;
@@ -8,6 +10,13 @@ public class ContactImpl implements Contact{
 		this.name = name;
 		this.notes = notes;
 		ID = (name.hashCode()+notes.hashCode())%10000;
+	}
+	
+	ContactImpl(int ID, String name, String notes){
+		//Added for being able to read the existing contacts from a file
+		this.ID = ID;
+		this.name = name;
+		this.notes = notes;
 	}
 	
 	public int getId(){

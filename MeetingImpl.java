@@ -1,7 +1,8 @@
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Set;
 
-public class MeetingImpl implements Meeting {
+public class MeetingImpl implements Meeting, Serializable {
 	
 	private int id;
 	private Calendar date;

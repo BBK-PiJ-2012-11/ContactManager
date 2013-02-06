@@ -4,13 +4,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.beans.XMLDecoder;
-import java.beans.XMLEncoder;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class ContactManagerImpl implements ContactManager{
 	private Set<Contact> contacts;
@@ -20,18 +21,73 @@ public class ContactManagerImpl implements ContactManager{
 	
 	@SuppressWarnings("unchecked")
 	public ContactManagerImpl(){
-			XMLDecoder d = null;
-			try{
-				d = new XMLDecoder(new BufferedInputStream(new FileInputStream(FILENAME)));
-				contacts = (Set<Contact>) d.readObject();
-				futureMeetings = (List<FutureMeeting>) d.readObject();
-				pastMeetings = (List<PastMeeting>) d.readObject();
-			} catch (FileNotFoundException e){
-				contacts = new HashSet<Contact>();
-				futureMeetings = new ArrayList<FutureMeeting>();
-				pastMeetings = new ArrayList<PastMeeting>();
+		FileInputStream fis = null;
+		BufferedReader reader = null;
+		Boolean readingContacts = false;
+		Boolean readingFutureMeetings = false;
+		Boolean readingPastMeetings = false;
+		
+		contacts = new HashSet<Contact>();
+		futureMeetings = new ArrayList<FutureMeeting>();
+		pastMeetings = new ArrayList<PastMeeting>();
+		
+		
+		try{
+			fis = new FileInputStream(FILENAME);
+			reader = new BufferedReader(new InputStreamReader(fis));
+			String line = reader.readLine();
+			while (line != null){
+				if (line == "CONTACTS"){
+					readingContacts = true;			
+				}
+				while (readingContacts){
+					line = reader.readLine();
+					if(line == "END OF CONTACTS"){
+						readingContacts = false;
+					} else {
+						//THE CONTACTS ARE SAVED AS "ID"(int),"NAME"(String),"NOTES"(String)
+						String[] contactArray = line.split(",");
+						contacts.add(new ContactImpl(Integer.parseInt(contactArray[0]),contactArray[1],contactArray[2]));						
+					}
+				}
+				if (line == "FUTURE MEETINGS"){
+					readingFutureMeetings = true;
+				}
+				while (readingFutureMeetings){
+					line = reader.readLine();
+					if(line == "END OF FUTURE MEETINGS"){
+						readingFutureMeetings = false;
+					} else {
+						//THE FUTURE MEETINGS ARE SAVED AS "ID"(int),"DATE IN MILLIS"(long),"CONTACTS"(ID1(int):ID2(int)...IDN(int)),"DATE IN THE WAY DD/MM/YYYY/HH:MM:SS"(String).
+						// THE LAST ONE IS JUST FOR BEING ABLE TO READ THE DATE AND TIME FROM THE FILE WITHOUT USING THE PROGRAM
+						String[] array = line.split(",");
+						String[] IDarray = array[2].split(":");
+						
+						Set<Contact> meetingContacts = new HashSet<Contact>();
+						meetingContacts = getContacts(stringArrayToIntArray(IDarray));
+						Calendar date = null;
+						date.setTimeInMillis(Long.parseLong(array[1]));
+						futureMeetings.add(new FutureMeetingImpl(Integer.parseInt(array[0]),date,meetingContacts));						
+					}
+					
+				}
+				if (line == "PAST MEETINGS"){
+					readingPastMeetings = true;
+				}
+				while (readingPastMeetings){
+					line = reader.readLine();
+					
+				}
+	
 			}
-			d.close();
+			
+		} catch (FileNotFoundException e){
+			System.out.println("File not founded, creating a new one");
+		} catch (IOException ex){
+			ex.printStackTrace();
+		} catch (IndexOutOfBoundsException ex){
+			System.out.println("The format of the file is not correct");
+		}
 	}
 	
 	
@@ -193,16 +249,7 @@ public class ContactManagerImpl implements ContactManager{
 	}
 
 	public void flush() {
-		XMLEncoder encode = null;
-		try {
-			encode = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(FILENAME)));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		encode.writeObject(contacts);
-		encode.writeObject(futureMeetings);
-		encode.writeObject(pastMeetings);
-		encode.close();
+
 		
 	}
 	
@@ -226,4 +273,12 @@ public class ContactManagerImpl implements ContactManager{
 		return sortedList;
 	}
 
+	//Method created for converting and array of strings to an array of integers
+	private int[] stringArrayToIntArray(String[] array){
+		int[] intArray = new int[array.length];
+		for (int i=0; i<array.length;i++){
+			intArray[i] = Integer.parseInt(array[i]);
+		}
+		return intArray;
+	}
 }

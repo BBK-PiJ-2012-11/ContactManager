@@ -5,7 +5,7 @@
 * Contacts have an ID (unique), a name (probably unique, but maybe not), 
 * and notes that the user may want to save about them.
 */
-public interface Contact {
+public interface Contact{
 	/**
 	* Returns the ID of the contact.
 	* 
