@@ -65,7 +65,7 @@ public class ContactManagerImpl implements ContactManager{
 						
 						Set<Contact> meetingContacts = new HashSet<Contact>();
 						meetingContacts = getContacts(stringArrayToIntArray(IDarray));
-						Calendar date = null;
+						Calendar date = Calendar.getInstance();
 						date.setTimeInMillis(Long.parseLong(array[1]));
 						futureMeetings.add(new FutureMeetingImpl(Integer.parseInt(array[0]),date,meetingContacts));						
 					}
