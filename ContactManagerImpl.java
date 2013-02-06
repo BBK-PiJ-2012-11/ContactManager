@@ -4,11 +4,30 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 
 public class ContactManagerImpl implements ContactManager{
 	private Set<Contact> contacts;
 	private List<FutureMeeting> futureMeetings;
 	private List<PastMeeting> pastMeetings;
+	final String FILENAME = "contacts.xml";
+	
+	public ContactManagerImpl(){
+			XMLDecoder d = null;
+			try{
+				d = new XMLDecoder(new BufferedInputStream(new FileInputStream(FILENAME)));
+				contacts = (Set<Contact>) d.readObject();
+				futureMeetings = (List<FutureMeeting>) d.readObject();
+				pastMeeting = (List<PastMeeting>) d.readObject();
+			} catch (FileNetFoundException e){
+				contacts = new HashSet<Contact>;
+				futureMeetings = new ArrayList<FutureMeeting>;
+				pastMeetings = new ArrayList<PastMeeting>;
+			}
+			d.close();
+	}
+	
 	
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date){
 		if(!this.contacts.containsAll(contacts) || (date.getTimeInMillis() < Calendar.getInstance().getTimeInMillis()) )
