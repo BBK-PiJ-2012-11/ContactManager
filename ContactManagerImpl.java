@@ -6,24 +6,30 @@ import java.util.List;
 import java.util.Set;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 public class ContactManagerImpl implements ContactManager{
 	private Set<Contact> contacts;
 	private List<FutureMeeting> futureMeetings;
 	private List<PastMeeting> pastMeetings;
-	final String FILENAME = "contacts.xml";
+	final String FILENAME = "contacts.txt";
 	
+	@SuppressWarnings("unchecked")
 	public ContactManagerImpl(){
 			XMLDecoder d = null;
 			try{
 				d = new XMLDecoder(new BufferedInputStream(new FileInputStream(FILENAME)));
 				contacts = (Set<Contact>) d.readObject();
 				futureMeetings = (List<FutureMeeting>) d.readObject();
-				pastMeeting = (List<PastMeeting>) d.readObject();
-			} catch (FileNetFoundException e){
-				contacts = new HashSet<Contact>;
-				futureMeetings = new ArrayList<FutureMeeting>;
-				pastMeetings = new ArrayList<PastMeeting>;
+				pastMeetings = (List<PastMeeting>) d.readObject();
+			} catch (FileNotFoundException e){
+				contacts = new HashSet<Contact>();
+				futureMeetings = new ArrayList<FutureMeeting>();
+				pastMeetings = new ArrayList<PastMeeting>();
 			}
 			d.close();
 	}
@@ -187,7 +193,16 @@ public class ContactManagerImpl implements ContactManager{
 	}
 
 	public void flush() {
-		// TODO Auto-generated method stub
+		XMLEncoder encode = null;
+		try {
+			encode = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(FILENAME)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		encode.writeObject(contacts);
+		encode.writeObject(futureMeetings);
+		encode.writeObject(pastMeetings);
+		encode.close();
 		
 	}
 	
