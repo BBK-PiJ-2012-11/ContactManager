@@ -11,6 +11,11 @@ public class PastMeetingImpl extends MeetingImpl implements PastMeeting, Seriali
 		this.notes = notes;
 	}
 	
+	public PastMeetingImpl(int ID, Calendar date,Set<Contact> contacts,String notes) {
+		super(ID, date, contacts);
+		this.notes = notes;
+	}
+	
 	
 	public PastMeetingImpl(FutureMeeting meeting,String notes){
 		super(meeting.getId(), meeting.getDate(),meeting.getContacts());

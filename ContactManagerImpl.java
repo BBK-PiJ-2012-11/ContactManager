@@ -19,7 +19,6 @@ public class ContactManagerImpl implements ContactManager{
 	private List<PastMeeting> pastMeetings;
 	final String FILENAME = "contacts.txt";
 	
-	@SuppressWarnings("unchecked")
 	public ContactManagerImpl(){
 		FileInputStream fis = null;
 		BufferedReader reader = null;
@@ -58,7 +57,8 @@ public class ContactManagerImpl implements ContactManager{
 					if(line == "END OF FUTURE MEETINGS"){
 						readingFutureMeetings = false;
 					} else {
-						//THE FUTURE MEETINGS ARE SAVED AS "ID"(int),"DATE IN MILLIS"(long),"CONTACTS"(ID1(int):ID2(int)...IDN(int)),"DATE IN THE WAY DD/MM/YYYY/HH:MM:SS"(String).
+						//THE FUTURE MEETINGS ARE SAVED AS "ID"(int),"DATE IN MILLIS"(long),
+						// "CONTACTS"(ID1(int):ID2(int)...IDN(int)),"DATE IN THE WAY DD/MM/YYYY/HH:MM:SS"(String).
 						// THE LAST ONE IS JUST FOR BEING ABLE TO READ THE DATE AND TIME FROM THE FILE WITHOUT USING THE PROGRAM
 						String[] array = line.split(",");
 						String[] IDarray = array[2].split(":");
@@ -76,6 +76,21 @@ public class ContactManagerImpl implements ContactManager{
 				}
 				while (readingPastMeetings){
 					line = reader.readLine();
+					if(line == "END OF PAST MEETINGS"){
+						readingPastMeetings = false;
+					} else {
+						//THE PAST MEETINGS ARE SAVED AS "ID"(int),"DATE IN MILLIS"(long),
+						//"CONTACTS"(ID1(int):ID2(int)...IDN(int)),"NOTES"(String),"DATE IN THE WAY DD/MM/YYYY/HH:MM:SS"(String).
+						// THE LAST ONE IS JUST FOR BEING ABLE TO READ THE DATE AND TIME FROM THE FILE WITHOUT USING THE PROGRAM
+						String[] array = line.split(",");
+						String[] IDarray = array[2].split(":");
+						
+						Set<Contact> meetingContacts = new HashSet<Contact>();
+						meetingContacts = getContacts(stringArrayToIntArray(IDarray));
+						Calendar date = Calendar.getInstance();
+						date.setTimeInMillis(Long.parseLong(array[1]));
+						pastMeetings.add(new PastMeetingImpl(Integer.parseInt(array[0]),date,meetingContacts,array[3]));						
+					}
 					
 				}
 	

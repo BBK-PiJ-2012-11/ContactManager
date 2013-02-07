@@ -1,8 +1,7 @@
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Set;
 
-public class MeetingImpl implements Meeting, Serializable {
+public class MeetingImpl implements Meeting{
 	
 	private int id;
 	private Calendar date;
@@ -20,7 +19,7 @@ public class MeetingImpl implements Meeting, Serializable {
 	//This constructor is made in case the id wants to be introduced manually
 	//Useful for transforming a FutureMeeting into a PastMeeting and keeping the ID
 	public MeetingImpl(int id, Calendar date, Set<Contact> contacts) {
-		this.id = date.hashCode()+contacts.hashCode();
+		this.id = id;
 		this.date = date;
 		this.contacts = contacts;
 	}
