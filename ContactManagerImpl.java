@@ -4,14 +4,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.FileWriter;
 
 public class ContactManagerImpl implements ContactManager{
 	private Set<Contact> contacts;
@@ -264,9 +263,97 @@ public class ContactManagerImpl implements ContactManager{
 	}
 
 	public void flush() {
+		FileWriter fileWriter = null;
+		try{
+			//File written CSV style
+			File textFile = new File(FILENAME);
+			fileWriter = new FileWriter(textFile);
+			// Here we start writing the Contacts
+			// It will create a list of strings like this:
+			// (int)ID,(String)name,(String)notes
+			// Example: 
+			// "912,An Drew,CEO of Werd Na"
+			fileWriter.write("CONTACTS\n");
+			Iterator<Contact> itr = contacts.iterator();
+			while(itr.hasNext()){
+				String contactString = null; 
+				contactString = Integer.toString(itr.next().getId()) + "," 
+						+ itr.next().getName() + "," + itr.next().getNotes() +"\n";
+				fileWriter.write(contactString);				
+			}
+			fileWriter.write("END OF CONTACTS\n");
+			// Here we start writing the Future Meetings
+			// It will create a list of strings like this:
+			// (int)ID,(Long)timeInMillis,(int)ContactID1:(int)ContactID2:...:(int)ContactIDn,(int)DD/(int)MM/(int)YYYY/(int)HH:(int)MM:(int)SS;
+			// Example: 
+			// "234,1293912929121.0,921:3821:2912,12/12/2012:12:12"
+			fileWriter.write("FUTURE MEETINGS\n");
+			Iterator<FutureMeeting> itr2 = futureMeetings.iterator();
+			while(itr2.hasNext()){
+				String meetingString = null;
+				meetingString = Integer.toString(itr2.next().getId()) + "," 
+						+ Long.toString(itr2.next().getDate().getTimeInMillis()) + ",";
+				Iterator<Contact> itrCont = itr2.next().getContacts().iterator();
+				int i = 0;
+				while(itrCont.hasNext()){
+					i++;
+					meetingString += (Integer.toString(itrCont.next().getId()));
+					if(i < itr2.next().getContacts().size()){
+						meetingString += ":";
+					}
+				}
+				meetingString += ("," + itr2.next().getDate().DAY_OF_MONTH + "/");
+				meetingString += (itr2.next().getDate().MONTH + "/");
+				meetingString += (itr2.next().getDate().YEAR + "/");
+				meetingString += (itr2.next().getDate().HOUR + ":");
+				meetingString += (itr2.next().getDate().MINUTE + ":");
+				meetingString += (itr2.next().getDate().SECOND + "\n");
+			}			
+			fileWriter.write("END OF FUTURE MEETINGS\n");
+			// Here we start writing the Past Meetings
+			// It will create a list of strings like this:
+			// (int)ID,(Long)timeInMillis,(int)ContactID1:(int)ContactID2:...:(int)ContactIDn,(String)Notes,(int)DD/(int)MM/(int)YYYY/(int)HH:(int)MM:(int)SS;
+			// Example: 
+			// "234,1293912929121.0,921:3821:2912,Useless meeting,12/12/2012:12:12"
+			fileWriter.write("PAST MEETINGS\n");
+			Iterator<PastMeeting> itr3 = pastMeetings.iterator();
+			while(itr3.hasNext()){
+				String meetingString = null;
+				meetingString = Integer.toString(itr3.next().getId()) + "," 
+						+ Long.toString(itr3.next().getDate().getTimeInMillis()) + ",";
+				Iterator<Contact> itrCont = itr3.next().getContacts().iterator();
+				int i = 0;
+				while(itrCont.hasNext()){
+					i++;
+					meetingString += (Integer.toString(itrCont.next().getId()));
+					if(i < itr3.next().getContacts().size()){
+						meetingString += ":";
+					}
+				}
+				meetingString += ("," + itr3.next().getNotes());
+				meetingString += ("," + itr3.next().getDate().DAY_OF_MONTH + "/");
+				meetingString += (itr3.next().getDate().MONTH + "/");
+				meetingString += (itr3.next().getDate().YEAR + "/");
+				meetingString += (itr3.next().getDate().HOUR + ":");
+				meetingString += (itr3.next().getDate().MINUTE + ":");
+				meetingString += (itr3.next().getDate().SECOND + "\n");
+			}
+			fileWriter.write("END OF PAST MEETINGS");
+			
+			fileWriter.close();
 
-		
+	    } catch (IOException ex) {
+	       ex.printStackTrace();
+	    } finally {
+	        try {
+	            fileWriter.close();
+	        } catch (IOException ex) {
+	            ex.printStackTrace();
+	        }
+	    }
 	}
+		
+	
 	
 	// This private method is used for sorting an unsorted List of Meetings by date. 
 	// Uses restricted wildcards accepting only the class Meeting and its subclasses
