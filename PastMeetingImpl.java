@@ -1,8 +1,7 @@
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Set;
 
-public class PastMeetingImpl extends MeetingImpl implements PastMeeting, Serializable {
+public class PastMeetingImpl extends MeetingImpl implements PastMeeting{
 	
 	private String notes;
 	

@@ -262,6 +262,7 @@ public class ContactManagerImpl implements ContactManager{
 		return contactsWithName;
 	}
 
+	@SuppressWarnings("static-access")
 	public void flush() {
 		FileWriter fileWriter = null;
 		try{
@@ -308,6 +309,7 @@ public class ContactManagerImpl implements ContactManager{
 				meetingString += (itr2.next().getDate().HOUR + ":");
 				meetingString += (itr2.next().getDate().MINUTE + ":");
 				meetingString += (itr2.next().getDate().SECOND + "\n");
+				fileWriter.write(meetingString);
 			}			
 			fileWriter.write("END OF FUTURE MEETINGS\n");
 			// Here we start writing the Past Meetings
@@ -337,6 +339,7 @@ public class ContactManagerImpl implements ContactManager{
 				meetingString += (itr3.next().getDate().HOUR + ":");
 				meetingString += (itr3.next().getDate().MINUTE + ":");
 				meetingString += (itr3.next().getDate().SECOND + "\n");
+				fileWriter.write(meetingString);
 			}
 			fileWriter.write("END OF PAST MEETINGS");
 			
