@@ -38,8 +38,8 @@ public class ContactManagerImpl implements ContactManager{
 				if (line == "CONTACTS"){
 					readingContacts = true;			
 				}
+				line = reader.readLine();
 				while (readingContacts){
-					line = reader.readLine();
 					if(line == "END OF CONTACTS"){
 						readingContacts = false;
 					} else {
@@ -47,12 +47,13 @@ public class ContactManagerImpl implements ContactManager{
 						String[] contactArray = line.split(",");
 						contacts.add(new ContactImpl(Integer.parseInt(contactArray[0]),contactArray[1],contactArray[2]));						
 					}
+					line = reader.readLine();
 				}
 				if (line == "FUTURE MEETINGS"){
 					readingFutureMeetings = true;
 				}
+				line = reader.readLine();
 				while (readingFutureMeetings){
-					line = reader.readLine();
 					if(line == "END OF FUTURE MEETINGS"){
 						readingFutureMeetings = false;
 					} else {
@@ -68,15 +69,16 @@ public class ContactManagerImpl implements ContactManager{
 						date.setTimeInMillis(Long.parseLong(array[1]));
 						futureMeetings.add(new FutureMeetingImpl(Integer.parseInt(array[0]),date,meetingContacts));						
 					}
-					
+					line = reader.readLine();					
 				}
+				line = reader.readLine();
 				if (line == "PAST MEETINGS"){
 					readingPastMeetings = true;
 				}
 				while (readingPastMeetings){
-					line = reader.readLine();
 					if(line == "END OF PAST MEETINGS"){
 						readingPastMeetings = false;
+						line = reader.readLine();
 					} else {
 						//THE PAST MEETINGS ARE SAVED AS "ID"(int),"DATE IN MILLIS"(long),
 						//"CONTACTS"(ID1(int):ID2(int)...IDN(int)),"NOTES"(String),"DATE IN THE WAY DD/MM/YYYY/HH:MM:SS"(String).
@@ -90,7 +92,7 @@ public class ContactManagerImpl implements ContactManager{
 						date.setTimeInMillis(Long.parseLong(array[1]));
 						pastMeetings.add(new PastMeetingImpl(Integer.parseInt(array[0]),date,meetingContacts,array[3]));						
 					}
-					
+					line = reader.readLine();
 				}
 	
 			}
@@ -385,5 +387,17 @@ public class ContactManagerImpl implements ContactManager{
 			intArray[i] = Integer.parseInt(array[i]);
 		}
 		return intArray;
+	}
+	
+	public static void main(String args[]){
+		ContactManagerImpl cm = new ContactManagerImpl();
+		cm.launch();
+	}
+
+
+	private void launch() {
+	//	addNewContact("Victor","Millonario altruista");
+	//	System.out.println(getContacts("ict"));
+		flush();		
 	}
 }

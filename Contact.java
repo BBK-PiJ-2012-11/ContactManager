@@ -1,4 +1,3 @@
-
 /**
 * A contact is a person we are making business with or may do in the future.
 *
@@ -21,7 +20,7 @@ public interface Contact{
 	String getName();
 	
 	/**
-	* Returns our notes about the contact, if any.
+	* Returns our notes about the contact, if any.`
 	*
 	* If we have not written anything about the contact, 
 	* the empty string is returned.
