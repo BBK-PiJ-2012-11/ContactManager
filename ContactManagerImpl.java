@@ -231,6 +231,7 @@ public class ContactManagerImpl implements ContactManager{
 		if (!foundId)
 			throw new IllegalArgumentException("The meeting Id introduced does not exist");
 		pastMeetings.add(new PastMeetingImpl(futureMeeting,text));
+		futureMeetings.remove(futureMeetings.indexOf(futureMeeting));
 	}
 	
 	public void addNewContact(String name, String notes){
@@ -404,6 +405,13 @@ public class ContactManagerImpl implements ContactManager{
 		addNewContact("bla","blabla");
 		System.out.println(getContacts("NdR"));
 		System.out.println(getFutureMeeting(386));
+		Calendar date = Calendar.getInstance();
+		date.set(2012, 11, 11);
+		addNewPastMeeting(getContacts("NdR"),date,"Prueba");
+		System.out.println(getMeeting(3122));
+		System.out.println(getMeeting(386));
+		System.out.println(getMeeting(21312));
+		addMeetingNotes(386,"Prueba pastmeeting");
 		flush();		
 	}
 }
