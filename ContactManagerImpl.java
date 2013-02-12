@@ -177,13 +177,15 @@ public class ContactManagerImpl implements ContactManager{
 		Iterator<PastMeeting> it1 = pastMeetings.iterator();
 		while(it1.hasNext()){
 			PastMeeting auxPM = it1.next();
-			if(auxPM.getDate().equals(date));
+			if(auxPM.getDate().get(Calendar.YEAR) == date.get(Calendar.YEAR) &&
+					auxPM.getDate().get(Calendar.DAY_OF_YEAR) == date.get(Calendar.DAY_OF_YEAR));
 				unsortedList.add(auxPM);
 		}
 		Iterator<FutureMeeting> it2 = futureMeetings.iterator();
 		while(it2.hasNext()){
 			FutureMeeting auxFM = it2.next();
-			if(auxFM.getDate() == date)
+			if(auxFM.getDate().get(Calendar.YEAR) == date.get(Calendar.YEAR) &&
+					auxFM.getDate().get(Calendar.DAY_OF_YEAR) == date.get(Calendar.DAY_OF_YEAR));
 				unsortedList.add(auxFM);
 		}
 		return (List<Meeting>) sortListByDate(unsortedList);
@@ -402,16 +404,18 @@ public class ContactManagerImpl implements ContactManager{
 
 
 	private void launch() {
-		addNewContact("bla","blabla");
-		System.out.println(getContacts("NdR"));
-		System.out.println(getFutureMeeting(386));
 		Calendar date = Calendar.getInstance();
 		date.set(2012, 11, 11);
+		System.out.println(date.get(Calendar.YEAR));
+		addNewContact("bla","blabla");
+		System.out.println(getContacts("NdR"));
+		System.out.println(getFutureMeeting(386));	
 		addNewPastMeeting(getContacts("NdR"),date,"Prueba");
 		System.out.println(getMeeting(3122));
 		System.out.println(getMeeting(386));
 		System.out.println(getMeeting(21312));
 		addMeetingNotes(386,"Prueba pastmeeting");
+		System.out.println(date.get(Calendar.YEAR));
 		flush();		
 	}
 }
