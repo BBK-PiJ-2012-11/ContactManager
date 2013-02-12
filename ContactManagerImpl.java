@@ -35,12 +35,12 @@ public class ContactManagerImpl implements ContactManager{
 			reader = new BufferedReader(new InputStreamReader(fis));
 			String line = reader.readLine();
 			while (line != null){
-				if (line == "CONTACTS"){
-					readingContacts = true;			
+				if (line.equals("CONTACTS")){
+					readingContacts = true;
 				}
 				line = reader.readLine();
 				while (readingContacts){
-					if(line == "END OF CONTACTS"){
+					if(line.equals("END OF CONTACTS")){
 						readingContacts = false;
 					} else {
 						//THE CONTACTS ARE SAVED AS "ID"(int),"NAME"(String),"NOTES"(String)
@@ -49,17 +49,16 @@ public class ContactManagerImpl implements ContactManager{
 					}
 					line = reader.readLine();
 				}
-				if (line == "FUTURE MEETINGS"){
+				if (line.equals("FUTURE MEETINGS")){
 					readingFutureMeetings = true;
 				}
 				line = reader.readLine();
 				while (readingFutureMeetings){
-					if(line == "END OF FUTURE MEETINGS"){
+					if(line.equals("END OF FUTURE MEETINGS")){
 						readingFutureMeetings = false;
 					} else {
 						//THE FUTURE MEETINGS ARE SAVED AS "ID"(int),"DATE IN MILLIS"(long),
-						// "CONTACTS"(ID1(int):ID2(int)...IDN(int)),"DATE IN THE WAY DD/MM/YYYY/HH:MM:SS"(String).
-						// THE LAST ONE IS JUST FOR BEING ABLE TO READ THE DATE AND TIME FROM THE FILE WITHOUT USING THE PROGRAM
+						// "CONTACTS"(ID1(int):ID2(int)...IDN(int))
 						String[] array = line.split(",");
 						String[] IDarray = array[2].split(":");
 						
@@ -69,20 +68,18 @@ public class ContactManagerImpl implements ContactManager{
 						date.setTimeInMillis(Long.parseLong(array[1]));
 						futureMeetings.add(new FutureMeetingImpl(Integer.parseInt(array[0]),date,meetingContacts));						
 					}
-					line = reader.readLine();					
+					line = reader.readLine();
 				}
-				line = reader.readLine();
-				if (line == "PAST MEETINGS"){
+				if (line.equals("PAST MEETINGS")){
 					readingPastMeetings = true;
 				}
+				line = reader.readLine();
 				while (readingPastMeetings){
-					if(line == "END OF PAST MEETINGS"){
+					if(line.equals("END OF PAST MEETINGS")){
 						readingPastMeetings = false;
-						line = reader.readLine();
 					} else {
 						//THE PAST MEETINGS ARE SAVED AS "ID"(int),"DATE IN MILLIS"(long),
-						//"CONTACTS"(ID1(int):ID2(int)...IDN(int)),"NOTES"(String),"DATE IN THE WAY DD/MM/YYYY/HH:MM:SS"(String).
-						// THE LAST ONE IS JUST FOR BEING ABLE TO READ THE DATE AND TIME FROM THE FILE WITHOUT USING THE PROGRAM
+						//"CONTACTS"(ID1(int):ID2(int)...IDN(int)),"NOTES"(String)
 						String[] array = line.split(",");
 						String[] IDarray = array[2].split(":");
 						
@@ -98,7 +95,7 @@ public class ContactManagerImpl implements ContactManager{
 			}
 			
 		} catch (FileNotFoundException e){
-			System.out.println("File not founded, creating a new one");
+			System.out.println("File not found, creating a new one");
 		} catch (IOException ex){
 			ex.printStackTrace();
 		} catch (IndexOutOfBoundsException ex){
@@ -108,7 +105,7 @@ public class ContactManagerImpl implements ContactManager{
 	
 	
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date){
-		if(!this.contacts.containsAll(contacts) || (date.getTimeInMillis() < Calendar.getInstance().getTimeInMillis()) )
+		if(contacts.isEmpty() || !this.contacts.containsAll(contacts) || (date.getTimeInMillis() < Calendar.getInstance().getTimeInMillis()) )
 			throw new IllegalArgumentException ("The meeting is being tried to set in the past or any of the contacts is unknown/non-existent");
 		FutureMeeting meeting = new FutureMeetingImpl(date,contacts);
 		futureMeetings.add(meeting);
@@ -122,9 +119,10 @@ public class ContactManagerImpl implements ContactManager{
 				throw new IllegalArgumentException("The ID introduced pertains to a Future Meeting");
 		}
 		Iterator<PastMeeting> it2 = pastMeetings.iterator();
-		while (it1.hasNext()){
-			if(it2.next().getId() == id)
-				return it2.next();
+		while (it2.hasNext()){
+			PastMeeting auxPM = it2.next();
+			if(auxPM.getId() == id)
+				return auxPM;
 		}
 		return null;
 	}
@@ -136,9 +134,10 @@ public class ContactManagerImpl implements ContactManager{
 				throw new IllegalArgumentException("The ID introduced pertains to a Past Meeting");
 		}
 		Iterator<FutureMeeting> it2 = futureMeetings.iterator();
-		while (it1.hasNext()){
-			if(it2.next().getId() == id)
-				return it2.next();
+		while (it2.hasNext()){
+			FutureMeeting auxFM = it2.next();
+			if(auxFM.getId() == id)
+				return auxFM;
 		}
 		return null;
 	}
@@ -146,13 +145,15 @@ public class ContactManagerImpl implements ContactManager{
 	public Meeting getMeeting(int id) {
 		Iterator<PastMeeting> it1 = pastMeetings.iterator();
 		while (it1.hasNext()){
-			if (it1.next().getId() == id)
-				return it1.next();
+			PastMeeting auxPM = it1.next();
+			if (auxPM.getId() == id)
+				return auxPM;
 		}
 		Iterator<FutureMeeting> it2 = futureMeetings.iterator();
-		while (it1.hasNext()){
-			if(it2.next().getId() == id)
-				return it2.next();
+		while (it2.hasNext()){
+			FutureMeeting auxFM = it2.next();
+			if(auxFM.getId() == id)
+				return auxFM;
 		}
 		return null;
 	}
@@ -163,8 +164,9 @@ public class ContactManagerImpl implements ContactManager{
 		List<Meeting> meetingsWithContact = new ArrayList<Meeting>();
 		Iterator<FutureMeeting> it = futureMeetings.iterator();
 		while(it.hasNext()){
-			if (it.next().getContacts().contains(contact))
-				meetingsWithContact.add(it.next());				
+			FutureMeeting auxFM = it.next();
+			if (auxFM.getContacts().contains(contact))
+				meetingsWithContact.add(auxFM);				
 		}
 		return meetingsWithContact;
 	}
@@ -174,13 +176,15 @@ public class ContactManagerImpl implements ContactManager{
 		List<Meeting> unsortedList = new ArrayList<Meeting>();
 		Iterator<PastMeeting> it1 = pastMeetings.iterator();
 		while(it1.hasNext()){
-			if(it1.next().getDate() == date)
-				unsortedList.add(it1.next());
+			PastMeeting auxPM = it1.next();
+			if(auxPM.getDate().equals(date));
+				unsortedList.add(auxPM);
 		}
 		Iterator<FutureMeeting> it2 = futureMeetings.iterator();
 		while(it2.hasNext()){
-			if(it2.next().getDate() == date)
-				unsortedList.add(it2.next());
+			FutureMeeting auxFM = it2.next();
+			if(auxFM.getDate() == date)
+				unsortedList.add(auxFM);
 		}
 		return (List<Meeting>) sortListByDate(unsortedList);
 	}
@@ -193,8 +197,9 @@ public class ContactManagerImpl implements ContactManager{
 		List<Meeting> unsortedList = new ArrayList<Meeting>();
 		Iterator<PastMeeting> it = pastMeetings.iterator();
 		while (it.hasNext()){
-			if (it.next().getContacts().contains(contact))
-				unsortedList.add(it.next());
+			PastMeeting auxPM = it.next();
+			if (auxPM.getContacts().contains(contact))
+				unsortedList.add(auxPM);
 		}
 		return (List<PastMeeting>) sortListByDate(unsortedList);
 	}
@@ -214,10 +219,11 @@ public class ContactManagerImpl implements ContactManager{
 		Iterator<FutureMeeting> it = futureMeetings.iterator();
 		boolean foundId = false;
 		while(it.hasNext()){
-			if(it.next().getId()==id){
+			FutureMeeting auxFM = it.next();
+			if(auxFM.getId()==id){
 				foundId = true;
-				futureMeeting = it.next();
-				if(it.next().getDate().getTimeInMillis() > Calendar.getInstance().getTimeInMillis())
+				futureMeeting = auxFM;
+				if(auxFM.getDate().getTimeInMillis() > Calendar.getInstance().getTimeInMillis())
 					throw new IllegalStateException ("This meeting cannot had been produced as it is set for a date in the future");
 				break;
 			}
@@ -239,8 +245,9 @@ public class ContactManagerImpl implements ContactManager{
 			Iterator<Contact> it = contacts.iterator();
 			boolean containsId = false;
 			while(it.hasNext()){
-				if (it.next().getId() == id){
-					foundContacts.add(it.next());
+				Contact auxC = it.next();
+				if (auxC.getId() == id){
+					foundContacts.add(auxC);
 					containsId = true;
 				}
 			}
@@ -252,19 +259,22 @@ public class ContactManagerImpl implements ContactManager{
 
 
 	public Set<Contact> getContacts(String name){
+		//This method is not Case Sensitive
 		if (name == null)
 			throw new NullPointerException ("The parameter name cannot be null");
+		name = name.toLowerCase();
 		Set<Contact> contactsWithName = new HashSet<Contact>();
 		Iterator<Contact> it = contacts.iterator();
 		while(it.hasNext()){
-			if(it.next().getName().contains(name)){
-				contactsWithName.add(it.next());
+			Contact aux = it.next();
+			String gotName = aux.getName().toLowerCase();
+			if(gotName.contains(name)){
+				contactsWithName.add(aux);
 			}
 		}
 		return contactsWithName;
 	}
 
-	@SuppressWarnings("static-access")
 	public void flush() {
 		FileWriter fileWriter = null;
 		try{
@@ -279,9 +289,10 @@ public class ContactManagerImpl implements ContactManager{
 			fileWriter.write("CONTACTS\n");
 			Iterator<Contact> itr = contacts.iterator();
 			while(itr.hasNext()){
+				Contact aux = itr.next();
 				String contactString = null; 
-				contactString = Integer.toString(itr.next().getId()) + "," 
-						+ itr.next().getName() + "," + itr.next().getNotes() +"\n";
+				contactString = Integer.toString(aux.getId()) + "," 
+						+ aux.getName() + "," + aux.getNotes() +"\n";
 				fileWriter.write(contactString);				
 			}
 			fileWriter.write("END OF CONTACTS\n");
@@ -293,54 +304,47 @@ public class ContactManagerImpl implements ContactManager{
 			fileWriter.write("FUTURE MEETINGS\n");
 			Iterator<FutureMeeting> itr2 = futureMeetings.iterator();
 			while(itr2.hasNext()){
+				FutureMeeting auxFM = itr2.next();
 				String meetingString = null;
-				meetingString = Integer.toString(itr2.next().getId()) + "," 
-						+ Long.toString(itr2.next().getDate().getTimeInMillis()) + ",";
-				Iterator<Contact> itrCont = itr2.next().getContacts().iterator();
+				meetingString = Integer.toString(auxFM.getId()) + "," 
+						+ Long.toString(auxFM.getDate().getTimeInMillis()) + ",";
+				Iterator<Contact> itrCont = auxFM.getContacts().iterator();
 				int i = 0;
 				while(itrCont.hasNext()){
+					Contact auxC = itrCont.next(); 
 					i++;
-					meetingString += (Integer.toString(itrCont.next().getId()));
-					if(i < itr2.next().getContacts().size()){
+					meetingString += (Integer.toString(auxC.getId()));
+					if(i < auxFM.getContacts().size()){
 						meetingString += ":";
 					}
 				}
-				meetingString += ("," + itr2.next().getDate().DAY_OF_MONTH + "/");
-				meetingString += (itr2.next().getDate().MONTH + "/");
-				meetingString += (itr2.next().getDate().YEAR + "/");
-				meetingString += (itr2.next().getDate().HOUR + ":");
-				meetingString += (itr2.next().getDate().MINUTE + ":");
-				meetingString += (itr2.next().getDate().SECOND + "\n");
+				meetingString += ("\n");
 				fileWriter.write(meetingString);
 			}			
 			fileWriter.write("END OF FUTURE MEETINGS\n");
 			// Here we start writing the Past Meetings
 			// It will create a list of strings like this:
-			// (int)ID,(Long)timeInMillis,(int)ContactID1:(int)ContactID2:...:(int)ContactIDn,(String)Notes,(int)DD/(int)MM/(int)YYYY/(int)HH:(int)MM:(int)SS;
+			// (int)ID,(Long)timeInMillis,(int)ContactID1:(int)ContactID2:...:(int)ContactIDn,(String)Notes
 			// Example: 
-			// "234,1293912929121.0,921:3821:2912,Useless meeting,12/12/2012:12:12"
+			// "234,1293912929121.0,921:3821:2912,Useless meeting"
 			fileWriter.write("PAST MEETINGS\n");
 			Iterator<PastMeeting> itr3 = pastMeetings.iterator();
 			while(itr3.hasNext()){
+				PastMeeting auxPM = itr3.next();
 				String meetingString = null;
-				meetingString = Integer.toString(itr3.next().getId()) + "," 
-						+ Long.toString(itr3.next().getDate().getTimeInMillis()) + ",";
-				Iterator<Contact> itrCont = itr3.next().getContacts().iterator();
+				meetingString = Integer.toString(auxPM.getId()) + "," 
+						+ Long.toString(auxPM.getDate().getTimeInMillis()) + ",";
+				Iterator<Contact> itrCont = auxPM.getContacts().iterator();
 				int i = 0;
 				while(itrCont.hasNext()){
+					Contact auxC = itrCont.next();
 					i++;
-					meetingString += (Integer.toString(itrCont.next().getId()));
-					if(i < itr3.next().getContacts().size()){
+					meetingString += (Integer.toString(auxC.getId()));
+					if(i < auxPM.getContacts().size()){
 						meetingString += ":";
 					}
 				}
-				meetingString += ("," + itr3.next().getNotes());
-				meetingString += ("," + itr3.next().getDate().DAY_OF_MONTH + "/");
-				meetingString += (itr3.next().getDate().MONTH + "/");
-				meetingString += (itr3.next().getDate().YEAR + "/");
-				meetingString += (itr3.next().getDate().HOUR + ":");
-				meetingString += (itr3.next().getDate().MINUTE + ":");
-				meetingString += (itr3.next().getDate().SECOND + "\n");
+				meetingString += ("," + auxPM.getNotes()+"\n");
 				fileWriter.write(meetingString);
 			}
 			fileWriter.write("END OF PAST MEETINGS");
@@ -366,12 +370,13 @@ public class ContactManagerImpl implements ContactManager{
 		List<Meeting> sortedList = new ArrayList<Meeting>();
 		while(!unsortedList.isEmpty()){
 			Iterator<? extends Meeting> it = unsortedList.iterator();
-			long oldestDate = it.next().getDate().getTimeInMillis();
-			Meeting oldestM = it.next();
+			Meeting auxM = it.next();
+			long oldestDate = auxM.getDate().getTimeInMillis();
+			Meeting oldestM = auxM;
 			while(it.hasNext()){
-				if(oldestDate > it.next().getDate().getTimeInMillis()){
-					oldestDate = it.next().getDate().getTimeInMillis();
-					oldestM = it.next();
+				if(oldestDate > auxM.getDate().getTimeInMillis()){
+					oldestDate = auxM.getDate().getTimeInMillis();
+					oldestM = auxM;
 				}								
 			}
 			unsortedList.remove(oldestM);
@@ -396,8 +401,9 @@ public class ContactManagerImpl implements ContactManager{
 
 
 	private void launch() {
-	//	addNewContact("Victor","Millonario altruista");
-	//	System.out.println(getContacts("ict"));
+		addNewContact("bla","blabla");
+		System.out.println(getContacts("NdR"));
+		System.out.println(getFutureMeeting(386));
 		flush();		
 	}
 }
