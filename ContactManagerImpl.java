@@ -174,19 +174,25 @@ public class ContactManagerImpl implements ContactManager{
 	@SuppressWarnings("unchecked")
 	public List<Meeting> getFutureMeetingList(Calendar date) {
 		List<Meeting> unsortedList = new ArrayList<Meeting>();
-		Iterator<PastMeeting> it1 = pastMeetings.iterator();
-		while(it1.hasNext()){
-			PastMeeting auxPM = it1.next();
-			if(auxPM.getDate().get(Calendar.YEAR) == date.get(Calendar.YEAR) &&
-					auxPM.getDate().get(Calendar.DAY_OF_YEAR) == date.get(Calendar.DAY_OF_YEAR));
-				unsortedList.add(auxPM);
-		}
-		Iterator<FutureMeeting> it2 = futureMeetings.iterator();
-		while(it2.hasNext()){
-			FutureMeeting auxFM = it2.next();
-			if(auxFM.getDate().get(Calendar.YEAR) == date.get(Calendar.YEAR) &&
-					auxFM.getDate().get(Calendar.DAY_OF_YEAR) == date.get(Calendar.DAY_OF_YEAR));
-				unsortedList.add(auxFM);
+		if(date.getTimeInMillis() < Calendar.getInstance().getTimeInMillis()){
+			Iterator<PastMeeting> it1 = pastMeetings.iterator();
+			while(it1.hasNext()){
+				PastMeeting auxPM = it1.next();
+				if(auxPM.getDate().get(Calendar.YEAR) == date.get(Calendar.YEAR) &&
+						auxPM.getDate().get(Calendar.DAY_OF_YEAR) == date.get(Calendar.DAY_OF_YEAR)){
+					unsortedList.add(auxPM);
+				}
+				
+			}
+		} else {
+			Iterator<FutureMeeting> it2 = futureMeetings.iterator();
+			while(it2.hasNext()){
+				FutureMeeting auxFM = it2.next();
+				if(auxFM.getDate().get(Calendar.YEAR) == date.get(Calendar.YEAR) &&
+						auxFM.getDate().get(Calendar.DAY_OF_YEAR) == date.get(Calendar.DAY_OF_YEAR)){
+					unsortedList.add(auxFM);
+				}
+			}
 		}
 		return (List<Meeting>) sortListByDate(unsortedList);
 	}
@@ -371,19 +377,24 @@ public class ContactManagerImpl implements ContactManager{
 	// Uses restricted wildcards accepting only the class Meeting and its subclasses
 	private  List<? extends Meeting> sortListByDate(List<? extends Meeting> unsortedList){
 		List<Meeting> sortedList = new ArrayList<Meeting>();
+		List<Integer> arrayInt = new ArrayList<Integer>();
 		while(!unsortedList.isEmpty()){
 			Iterator<? extends Meeting> it = unsortedList.iterator();
 			Meeting auxM = it.next();
 			long oldestDate = auxM.getDate().getTimeInMillis();
 			Meeting oldestM = auxM;
 			while(it.hasNext()){
+				auxM=it.next();
 				if(oldestDate > auxM.getDate().getTimeInMillis()){
 					oldestDate = auxM.getDate().getTimeInMillis();
 					oldestM = auxM;
 				}								
 			}
 			unsortedList.remove(oldestM);
-			sortedList.add(oldestM);
+			if(!arrayInt.contains(oldestM.getId())){
+				sortedList.add(oldestM);
+				arrayInt.add(oldestM.getId());
+			}
 		}
 		return sortedList;
 	}
@@ -405,17 +416,13 @@ public class ContactManagerImpl implements ContactManager{
 
 	private void launch() {
 		Calendar date = Calendar.getInstance();
-		date.set(2012, 11, 11);
+		date.setTimeInMillis((long)2560628686806.0);
 		System.out.println(date.get(Calendar.YEAR));
-		addNewContact("bla","blabla");
-		System.out.println(getContacts("NdR"));
-		System.out.println(getFutureMeeting(386));	
-		addNewPastMeeting(getContacts("NdR"),date,"Prueba");
-		System.out.println(getMeeting(3122));
-		System.out.println(getMeeting(386));
-		System.out.println(getMeeting(21312));
-		addMeetingNotes(386,"Prueba pastmeeting");
-		System.out.println(date.get(Calendar.YEAR));
+		List<Meeting> list = getFutureMeetingList(date);
+		System.out.println(list);
+		for(int i=0;i<list.size();i++){
+			System.out.println(list.get(i).getDate().getTimeInMillis() + " " + list.get(i).getId());
+		}
 		flush();		
 	}
 }
