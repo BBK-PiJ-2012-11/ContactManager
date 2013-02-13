@@ -158,6 +158,7 @@ public class ContactManagerImpl implements ContactManager{
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Meeting> getFutureMeetingList(Contact contact){
 		if(!contacts.contains(contact))
 			throw new IllegalArgumentException ("The contact does not exists");
@@ -168,7 +169,7 @@ public class ContactManagerImpl implements ContactManager{
 			if (auxFM.getContacts().contains(contact))
 				meetingsWithContact.add(auxFM);				
 		}
-		return meetingsWithContact;
+		return (List<Meeting>) sortListByDate(meetingsWithContact);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -408,21 +409,4 @@ public class ContactManagerImpl implements ContactManager{
 		return intArray;
 	}
 	
-	public static void main(String args[]){
-		ContactManagerImpl cm = new ContactManagerImpl();
-		cm.launch();
-	}
-
-
-	private void launch() {
-		Calendar date = Calendar.getInstance();
-		date.setTimeInMillis((long)2560628686806.0);
-		System.out.println(date.get(Calendar.YEAR));
-		List<Meeting> list = getFutureMeetingList(date);
-		System.out.println(list);
-		for(int i=0;i<list.size();i++){
-			System.out.println(list.get(i).getDate().getTimeInMillis() + " " + list.get(i).getId());
-		}
-		flush();		
-	}
 }
